@@ -6,11 +6,19 @@ quint <- function(x, descending = TRUE) {
   labels <- if(descending) (length(cutoff) - 1):1 else 1:(length(cutoff) - 1)
   labels <- replace(labels, labels == max(labels), 5)
 
-  if(sum(is.na(cutoff)) == 0) {
-    as.numeric(as.character(cut(x,
-                                breaks = cutoff,
-                                labels = labels,
-                                include.lowest = TRUE)))
-  } else rep(NA, length(x))
+  if(sum(is.na(cutoff)) == 0 && length(cutoff) > 1) {
+
+    tryCatch({
+      cuts <- as.numeric(as.character(cut(x,
+                                          breaks = cutoff,
+                                          labels = labels,
+                                          include.lowest = TRUE)))
+      return(cuts)
+    }, error = function(e) {
+      print(e$message)
+      return(rep(NA, length(x)))
+    })
+
+  } else return(rep(NA, length(x)))
   
 }
